@@ -1,7 +1,15 @@
 <?php
 session_start();
+
+// Ensure the user is logged in
 if (!isset($_SESSION["user_id"])) {
     header("Location: login.html");
+    exit();
+}
+
+// Check if the username session variable is set
+if (!isset($_SESSION["username"])) {
+    echo "<p>Error: Username session variable not set.</p>";
     exit();
 }
 ?>
