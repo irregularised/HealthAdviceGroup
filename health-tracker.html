@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Tracker - Health Advice Group</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-shadow">
+            <div class="container">
+                <a href="index.html" class="navbar-brand">
+                    <img src="logo.png" alt="Health Advice Group">
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="weather-forecast.html" class="nav-link">Weather Forecast</a></li>
+                    <li><a href="air-quality.html" class="nav-link">Air Quality</a></li>
+                    <li><a href="health-tracker.html" class="nav-link active">Health Tracker</a></li>
+                    <li><a href="about.html" class="nav-link">About Us</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    
+    <section class="hero">
+        <div class="container text-center">
+            <h1>Personal Health Tracker</h1>
+            <p class="hero-description">Track your health trends and maintain a journal for better well-being.</p>
+        </div>
+    </section>
+
+    <section class="health-tracker container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="dashboard-card">
+                    <h4>Daily Journal</h4>
+                    <form id="healthJournalForm">
+                        <div class="mb-3">
+                            <label for="journalDate" class="form-label">Date</label>
+                            <input type="date" id="journalDate" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="mood" class="form-label">Mood</label>
+                            <select id="mood" class="form-control">
+                                <option>Happy</option>
+                                <option>Neutral</option>
+                                <option>Sad</option>
+                                <option>Anxious</option>
+                                <option>Tired</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notes</label>
+                            <textarea id="notes" class="form-control" rows="4" placeholder="Write about your health today..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Entry</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="dashboard-card">
+                    <h4>Health Trends</h4>
+                    <canvas id="moodChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="container mt-4">
+        <div class="dashboard-card">
+            <h4>Past Entries</h4>
+            <ul id="journalEntries" class="list-group"></ul>
+        </div>
+    </section>
+    
+    <footer class="footer">
+        <div class="container text-center">
+            <p>&copy; 2025 Health Advice Group. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const journalForm = document.getElementById("healthJournalForm");
+            const journalEntries = document.getElementById("journalEntries");
+            let journalData = JSON.parse(localStorage.getItem("journalData")) || [];
+
+            journalForm.addEventListener("submit", (event) => {
+                event.preventDefault();
+                const date = document.getElementById("journalDate").value;
+                const mood = document.getElementById("mood").value;
+                const notes = document.getElementById("notes").value;
+                const entry = { date, mood, notes };
+                journalData.push(entry);
+                localStorage.setItem("journalData", JSON.stringify(journalData));
+                updateJournalEntries();
+                updateChart();
+            });
+
+            function updateJournalEntries() {
+                journalEntries.innerHTML = "";
+                journalData.forEach((entry) => {
+                    const listItem = document.createElement("li");
+                    listItem.classList.add("list-group-item");
+                    listItem.innerHTML = `<strong>${entry.date}</strong> - ${entry.mood} <br> ${entry.notes}`;
+                    journalEntries.appendChild(listItem);
+                });
+            }
+
+            function updateChart() {
+                const moodCounts = {};
+                journalData.forEach(entry => {
+                    moodCounts[entry.mood] = (moodCounts[entry.mood] || 0) + 1;
+                });
+                const ctx = document.getElementById("moodChart").getContext("2d");
+                new Chart(ctx, {
+                    type: "pie",
+                    data: {
+                        labels: Object.keys(moodCounts),
+                        datasets: [{
+                            data: Object.values(moodCounts),
+                            backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF"],
+                        }]
+                    }
+                });
+            }
+            updateJournalEntries();
+            updateChart();
+        });
+    </script>
+</body>
+</html>
