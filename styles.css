@@ -124,3 +124,28 @@ button:hover {
         width: 90%;
     }
 }
+
+/* Metric Grid */
+.metric-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+}
+
+.metric-card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    text-align: center;
+    width: 100%;
+    max-width: 150px;
+}
+
+/* Responsive Design for Cards */
+@media (max-width: 768px) {
+    .metric-card {
+        max-width: 100%;
+    }
+}

@@ -3,86 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Air Quality Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="./assets/css/style.css">
+    <title>Air Quality Dashboard | Health Advice Group</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js -->
 </head>
 <body>
-    <div class="container mt-4">
-        <h2 class="text-center">Real-Time Air Quality Monitoring</h2>
-        <div class="mb-3">
-            <input type="text" id="cityInput" class="form-control" placeholder="Enter city name">
-            <button class="btn btn-primary mt-2" onclick="fetchAirQuality()">Search</button>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <canvas id="airQualityChart"></canvas>
+    <!-- Header -->
+    <header class="header">
+        Health Advice Group
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <a href="index.html">Home</a>
+        <a href="#weather-forecast">Weather Forecast</a>
+        <a href="#air-quality">Air Quality</a>
+        <a href="#health-tracker">Health Tracker</a>
+        <a href="#about-us">About Us</a>
+        <a href="#profile">Profile</a>
+        <a href="#accessibility-settings">Accessibility Settings</a>
+        <a href="#sign-out">Sign Out</a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="dashboard-container">
+        <!-- Search Bar -->
+        <form id="search-form" class="card">
+            <h3>Search Air Quality</h3>
+            <label for="location-search">Enter Location:</label>
+            <input type="text" id="location-search" placeholder="e.g., London">
+            <button id="search-button">Search</button>
+        </form>
+
+        <!-- Air Quality Metrics -->
+        <div class="card">
+            <h3>Air Quality Metrics</h3>
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <p><strong>PM2.5:</strong> <span id="pm25-value">--</span> µg/m³</p>
+                    <p>Status: <span id="pm25-status">--</span></p>
+                </div>
+                <div class="metric-card">
+                    <p><strong>PM10:</strong> <span id="pm10-value">--</span> µg/m³</p>
+                    <p>Status: <span id="pm10-status">--</span></p>
+                </div>
+                <div class="metric-card">
+                    <p><strong>Ozone (O3):</strong> <span id="o3-value">--</span> ppb</p>
+                    <p>Status: <span id="o3-status">--</span></p>
+                </div>
+                <div class="metric-card">
+                    <p><strong>Nitrogen Dioxide (NO2):</strong> <span id="no2-value">--</span> ppb</p>
+                    <p>Status: <span id="no2-status">--</span></p>
+                </div>
             </div>
-            <div class="col-md-6">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Parameter</th>
-                            <th>Value</th>
-                        </tr>
-                    </thead>
-                    <tbody id="airQualityTable">
-                    </tbody>
-                </table>
-            </div>
         </div>
-    </div>
-    
-    <script>
-        const apiToken = "a74ca9a688d34475950111355241911";
-        let airQualityChart;
-        
-        async function fetchAirQuality() {
-            const city = document.getElementById("cityInput").value || "London";
-            const apiUrl = `https://api.weatherapi.com/v1/current.json?key=${apiToken}&q=${city}&aqi=yes`;
-            
-            try {
-                const response = await fetch(apiUrl);
-                const data = await response.json();
-                
-                if (data.error) {
-                    console.error("API Error:", data.error.message);
-                    return;
-                }
-                
-                const airQuality = data.current.air_quality;
-                const tableBody = document.getElementById("airQualityTable");
-                tableBody.innerHTML = "";
-                
-                Object.keys(airQuality).forEach(param => {
-                    const row = `<tr><td>${param}</td><td>${airQuality[param]}</td></tr>`;
-                    tableBody.innerHTML += row;
-                });
-                
-                const ctx = document.getElementById("airQualityChart").getContext("2d");
-                
-                if (airQualityChart) {
-                    airQualityChart.destroy();
-                }
-                
-                airQualityChart = new Chart(ctx, {
-                    type: "bar",
-                    data: {
-                        labels: Object.keys(airQuality),
-                        datasets: [{
-                            label: "Air Quality Index",
-                            data: Object.values(airQuality),
-                            backgroundColor: "rgba(54, 162, 235, 0.5)"
-                        }]
-                    }
-                });
-            } catch (error) {
-                console.error("Failed to fetch air quality data", error);
-            }
-        }
-        
-        document.addEventListener("DOMContentLoaded", fetchAirQuality);
-    </script>
-</body>
-</html>
+
+        <!-- Air Quality Chart -->
+        <div class="card">
+            <h3>Air Quality Trends</h3>
+            <canvas id="airQualityChart" width="400" height="200"></canvas>
+        </div>
+
+        <!-- Health Recommendations -->
+        <div class="card">
+            <h3>Health Recommendations</h3>
+            <ul id="recommendations-list">
+                <li>Stay indoors during peak pollution hours.</li>
+                <li>Use air purifiers at home.</li>
+                <li>Wear a mask if going outside.</li>
+                <li>Avoid strenuous outdoor activities.</li>
+            </ul>
+        </div>
+
+       

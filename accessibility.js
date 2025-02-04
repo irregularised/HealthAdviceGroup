@@ -1,4 +1,4 @@
-const apiToken = "a74ca9a688d34475950111355241911";
+const apiToken = "5770de019f7a4d1db1e202716250302";
 let airQualityChart;
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -91,11 +91,19 @@ function updateTable(airQuality) {
 
 function updateChart(airQuality) {
     const ctx = document.getElementById("airQualityChart").getContext("2d");
-    
-    if (airQualityChart) {
+
+    // Destroy existing chart instance if it exists
+    if (airQualityChart && airQualityChart.destroy) {
         airQualityChart.destroy();
     }
-    
+
+    // Validate air quality data
+    if (!airQuality || Object.keys(airQuality).length === 0) {
+        console.error("No air quality data available.");
+        showError("No air quality data available for this location.");
+        return;
+    }
+
     const labels = {
         "pm2_5": "PM2.5",
         "pm10": "PM10",
@@ -104,20 +112,21 @@ function updateChart(airQuality) {
         "so2": "SO₂",
         "co": "CO"
     };
-    
+
     const chartData = {
         labels: Object.values(labels),
         datasets: [{
             label: 'Air Quality Metrics',
-            data: Object.keys(labels).map(key => airQuality[key]),
-            backgroundColor: Object.keys(labels).map(key => 
+            data: Object.keys(labels).map(key => airQuality[key] || 0), // Default to 0 if data is missing
+            backgroundColor: Object.keys(labels).map(key =>
                 getAQIStatus(airQuality[key]).color + '80'),
-            borderColor: Object.keys(labels).map(key => 
+            borderColor: Object.keys(labels).map(key =>
                 getAQIStatus(airQuality[key]).color),
             borderWidth: 1
         }]
     };
-    
+
+    // Initialize the chart
     airQualityChart = new Chart(ctx, {
         type: 'bar',
         data: chartData,
